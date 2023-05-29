@@ -26,13 +26,13 @@ export default function Home() {
   const [accessToken, setAccessToken] = useState("");
 
   useEffect(() => {
-    console.log("hello");
     getAccessToken();
   });
 
   function getAccessToken() {
-    const hashString = window.location.search;
+    const hashString = window.location.hash;
     if (hashString) {
+      console.log("Access token present in URL");
       let start = hashString.indexOf("=") + 1;
       let end = hashString.indexOf("&");
       setAccessToken(hashString.substring(start, end));
