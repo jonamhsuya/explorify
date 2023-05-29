@@ -22,7 +22,23 @@ const circularMedium = localFont({
 });
 
 export default function Home() {
-  useEffect(() => {});
+  const [accessToken, setAccessToken] = useState("");
+
+  useEffect(() => {
+    console.log('hello')
+    setAccessToken(getAccessToken());
+  }, [accessToken]);
+
+  function getAccessToken() {
+    let accessToken = "";
+    const queryString = window.location.search;
+    if (queryString.length > 0) {
+      const urlParams = new URLSearchParams(queryString);
+      accessToken = urlParams.get("access_token") ?? "";
+    }
+    console.log(accessToken);
+    return accessToken;
+  }
 
   const client_id = "adfd1bc87db44b8898bfab14d45d4a6f";
   const redirect_uri = "https://explorify.ayushmanoj.com";
@@ -59,6 +75,7 @@ export default function Home() {
             <p className={circularMedium.className}>Log in with Spotify</p>
           </h2>
         </a>
+        <p>{accessToken}</p>
       </main>
     </>
   );
