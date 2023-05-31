@@ -267,8 +267,8 @@ export default function Home() {
                   }}
                   className={
                     useHistory === "true"
-                      ? "flex flex-row gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-black dark:bg-white text-white dark:text-black scale-110 shadow-lg"
-                      : "flex flex-row gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
+                      ? "flex flex-row items-center gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-black dark:bg-white text-white dark:text-black scale-110 shadow-lg"
+                      : "flex flex-row items-center gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
                   }
                 >
                   <p>based on my</p>
