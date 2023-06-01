@@ -194,7 +194,10 @@ export default function Home() {
                     />
                   </div>
                   <p>{username}</p>
-                  <a href="/" className="p-1 rounded-full hover:bg-blue-400 duration-200">
+                  <a
+                    href="/"
+                    className="p-1 rounded-full hover:bg-blue-400 duration-200"
+                  >
                     <IconLogout />
                   </a>
                 </div>

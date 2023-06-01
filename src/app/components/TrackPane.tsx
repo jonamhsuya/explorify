@@ -32,7 +32,7 @@ export default function TrackPane(props: Props) {
           className="object-fill"
         />
       </div>
-      <div className="flex flex-col items-center justify-center gap-1 md:w-96 sm:w-80 w-64 sm:h-60 h-52 p-6">
+      <div className="flex flex-col items-center justify-center gap-1 md:w-96 sm:w-80 w-64 sm:h-60 h-52 sm:px-8 px-6">
         <div className="w-[70px] mb-2">
           <img alt="Spotify" src="/Spotify_Logo_RGB_White.png" />
         </div>
