@@ -2,7 +2,7 @@
 "use client";
 
 import "./globals.css";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { IconBrandSpotify, IconLogout, IconSearch } from "@tabler/icons-react";
 import TrackPane from "./components/TrackPane";
 import { Image, Track } from "./types";
@@ -52,6 +52,7 @@ export default function Home() {
       );
       if (genreData.status === 401) {
         setModalOpen(true);
+        return;
       }
       const genreJSON = await genreData.json();
       setGenres(genreJSON.genres);
@@ -85,6 +86,7 @@ export default function Home() {
         });
         if (topItemsData.status === 401) {
           setModalOpen(true);
+          return;
         }
         let topItemsJSON = await topItemsData.json();
         setTopItems(topItemsJSON.items);
@@ -178,12 +180,12 @@ export default function Home() {
       {authorized && (
         <>
           <main className="min-h-screen flex flex-col items-center justify-between gap-24 bg-gradient-to-b from-teal-200 to-lime-200 dark:from-teal-800 dark:to-lime-800 md:px-24 md:pb-24 px-12 pb-12">
-            <div className="flex sm:flex-row flex-col items-center justify-between sm:gap-0 gap-6 p-8 w-screen">
+            <div className="flex sm:flex-row flex-col items-center justify-between sm:gap-0 gap-6 p-8 w-[95vw]">
               <h1 className="sm:text-6xl text-5xl font-bold text-center">
                 explorify
               </h1>
               {username && profileImages && (
-                <div className="flex flex-row items-center gap-3 sm:px-6 px-4 sm:py-4 py-3 rounded-full bg-blue-200 dark:bg-blue-800 shadow-md">
+                <div className="flex flex-row items-center gap-3 px-6 py-4 rounded-full bg-blue-200 dark:bg-blue-800 shadow-md">
                   <div className="rounded-full border-2 border-black">
                     <img
                       alt={username}
@@ -191,7 +193,7 @@ export default function Home() {
                       className="w-8 h-8 rounded-full"
                     />
                   </div>
-                  <p className="sm:block hidden">{username}</p>
+                  <p>{username}</p>
                   <a href="/" className="p-1 rounded-full hover:bg-blue-400 duration-200">
                     <IconLogout />
                   </a>
