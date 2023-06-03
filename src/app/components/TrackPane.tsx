@@ -43,7 +43,7 @@ export default function TrackPane(props: Props) {
           arr.push(item.name);
           return "";
         })}
-        <div className="md:text-base sm:text-sm text-xs">
+        <div className="md:text-base sm:text-sm text-xs overflow-auto">
           <p>{toString(arr)}</p>
         </div>
       </div>
