@@ -244,7 +244,6 @@ export default function Home() {
                 <div className="flex flex-row items-center bg-white shadow-lg rounded-full p-2 gap-2">
                   <input
                     value={query}
-                    onClick={() => setSeedGenre("")}
                     onKeyUp={(event) => {
                       if (event.key === "Enter") {
                         search();
@@ -279,6 +278,7 @@ export default function Home() {
                           key={index}
                           onClick={() => {
                             setSeedArtist(item);
+                            setSeedGenre("")
                             setSearchResults([]);
                           }}
                           className={
