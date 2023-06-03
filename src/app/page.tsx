@@ -75,20 +75,24 @@ export default function Home() {
   }, [accessToken]);
 
   const search = async () => {
-    setLoading(true);
-    let searchData = await fetch(
-      "https://api.spotify.com/v1/search?q=" + query + "&type=artist&limit=10",
-      {
-        headers: { Authorization: "Bearer " + accessToken },
+    if (query !== "") {
+      setLoading(true);
+      let searchData = await fetch(
+        "https://api.spotify.com/v1/search?q=" +
+          query +
+          "&type=artist&limit=10",
+        {
+          headers: { Authorization: "Bearer " + accessToken },
+        }
+      );
+      if (searchData.status === 401) {
+        setModalOpen(true);
+        return;
       }
-    );
-    if (searchData.status === 401) {
-      setModalOpen(true);
-      return;
+      let searchJSON = await searchData.json();
+      setSearchResults(searchJSON.artists?.items);
+      setLoading(false);
     }
-    let searchJSON = await searchData.json();
-    setSearchResults(searchJSON.artists.items);
-    setLoading(false);
   };
 
   const explore = async () => {
@@ -134,7 +138,7 @@ export default function Home() {
       }
 
       url = "https://api.spotify.com/v1/recommendations";
-      url += "?seed_artists=" + seedArtist?.id;
+      url += "?seed_artists=" + (seedArtist !== undefined ? seedArtist.id : "");
       url += "&seed_genres=" + seedGenre;
       url += "&seed_tracks=" + "";
       if (useHistory === "true") {
@@ -267,8 +271,8 @@ export default function Home() {
                     )}
                   </button>
                 </div>
-                {searchResults.length > 0 && !seedArtist && (
-                  <div className="flex flex-col border border-black bg-white rounded-2xl sm:w-96 w-48 shadow-lg">
+                {searchResults && searchResults.length > 0 && (
+                  <div className="flex flex-col border border-black bg-white rounded-2xl sm:w-96 w-64 shadow-lg">
                     {searchResults.map((item, index) => {
                       return (
                         <button
@@ -279,13 +283,23 @@ export default function Home() {
                           }}
                           className={
                             index === 0
-                              ? "hover:bg-neutral-200 duration-200 border-b rounded-t-2xl p-2"
+                              ? "flex flex-row items-center justify-between hover:bg-neutral-200 duration-200 border-b rounded-t-2xl px-4 py-2"
                               : index === searchResults.length - 1
-                              ? "hover:bg-neutral-200 duration-200 rounded-b-2xl p-2"
-                              : "hover:bg-neutral-200 duration-200 border border-t-0 p-2"
+                              ? "flex flex-row items-center justify-between hover:bg-neutral-200 duration-200 rounded-b-2xl px-4 py-2"
+                              : "flex flex-row items-center justify-between hover:bg-neutral-200 duration-200 border border-t-0 px-4 py-2"
                           }
                         >
-                          {item.name}
+                          <div className="flex flex-row items-center gap-4">
+                            <img
+                              alt={item.name}
+                              src={item.images[0]?.url}
+                              className="w-16 h-16 rounded-full object-cover sm:block hidden"
+                            />
+                            <p className="text-lg text-left">{item.name}</p>
+                          </div>
+                          <p className="text-xs text-right border border-transparent sm:block hidden">
+                            {item.followers.total} followers
+                          </p>
                         </button>
                       );
                     })}
@@ -293,10 +307,16 @@ export default function Home() {
                 )}
               </div>
               {seedArtist && (
-                <div className="flex flex-row items-center gap-4 p-4 rounded-full border-2 border-black bg-blue-200 dark:bg-blue-800">
-                  <p>{seedArtist.name}</p>
+                <div className="flex flex-row items-center gap-4 px-6 py-2 rounded-2xl border-2 border-black bg-blue-200 dark:bg-blue-800">
+                  <img
+                    alt={seedArtist.name}
+                    src={seedArtist.images[0]?.url}
+                    className="w-16 h-16 rounded-full border border-black object-cover"
+                  />
+                  <p className="text-xl">{seedArtist.name}</p>
                   <button>
                     <IconCircleX
+                      size={28}
                       onClick={() => {
                         setSeedArtist(undefined);
                       }}
