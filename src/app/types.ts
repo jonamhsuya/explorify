@@ -60,7 +60,7 @@ type Album = {
     artists: Array<SimplifiedArtist>;
 }
 
-type Artist = {
+export type Artist = {
     external_urls: {
         spotify: string;
     }

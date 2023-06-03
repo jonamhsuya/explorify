@@ -36,14 +36,14 @@ export default function TrackPane(props: Props) {
         <div className="w-[70px] mb-2">
           <img alt="Spotify" src="/Spotify_Logo_RGB_White.png" />
         </div>
-        <div className="lg:text-lg sm:text-base text-sm">
+        <div className="md:text-lg sm:text-base text-sm">
           <p className="font-bold">{props.track.name}</p>
         </div>
         {props.track.artists.map((item, index) => {
           arr.push(item.name);
           return "";
         })}
-        <div className="lg:text-base sm:text-sm text-xs">
+        <div className="md:text-base sm:text-sm text-xs">
           <p>{toString(arr)}</p>
         </div>
       </div>

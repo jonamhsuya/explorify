@@ -3,21 +3,27 @@
 
 import "./globals.css";
 import { useState, useEffect } from "react";
-import { IconBrandSpotify, IconLogout, IconSearch } from "@tabler/icons-react";
+import {
+  IconBrandSpotify,
+  IconCircleX,
+  IconLogout,
+  IconSearch,
+} from "@tabler/icons-react";
 import TrackPane from "./components/TrackPane";
-import { Image, Track } from "./types";
-import { Dialog } from "@headlessui/react";
+import { Artist, Image, Track } from "./types";
+import { Dialog, Transition } from "@headlessui/react";
 
 export default function Home() {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [profileImages, setProfileImages] = useState(Array<Image>);
   const [accessToken, setAccessToken] = useState("");
   const [genres, setGenres] = useState([]);
-  const [seedArtist, setSeedArtist] = useState("");
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState(Array<Artist>);
+  const [seedArtist, setSeedArtist] = useState<Artist>();
   const [seedGenre, setSeedGenre] = useState("");
   const [useHistory, setUseHistory] = useState("");
   const [timeRange, setTimeRange] = useState("medium_term");
@@ -68,8 +74,25 @@ export default function Home() {
     setup();
   }, [accessToken]);
 
+  const search = async () => {
+    setLoading(true);
+    let searchData = await fetch(
+      "https://api.spotify.com/v1/search?q=" + query + "&type=artist&limit=10",
+      {
+        headers: { Authorization: "Bearer " + accessToken },
+      }
+    );
+    if (searchData.status === 401) {
+      setModalOpen(true);
+      return;
+    }
+    let searchJSON = await searchData.json();
+    setSearchResults(searchJSON.artists.items);
+    setLoading(false);
+  };
+
   const explore = async () => {
-    if (seedGenre === "" && seedArtist === "") {
+    if (seedGenre === "" && !seedArtist) {
       alert("Please select an artist or genre.");
     } else if (useHistory === "") {
       alert("Please select how you want your recommendations to be generated.");
@@ -111,7 +134,7 @@ export default function Home() {
       }
 
       url = "https://api.spotify.com/v1/recommendations";
-      url += "?seed_artists=" + seedArtist;
+      url += "?seed_artists=" + seedArtist?.id;
       url += "&seed_genres=" + seedGenre;
       url += "&seed_tracks=" + "";
       if (useHistory === "true") {
@@ -137,8 +160,6 @@ export default function Home() {
 
   const client_id = "adfd1bc87db44b8898bfab14d45d4a6f";
   const redirect_uri = "https://explorify.ayushmanoj.com";
-  // var state = generateRandomString(16);
-  // localStorage.setItem(stateKey, state);
   const scope = "user-top-read";
   let redirectURL = "https://accounts.spotify.com/authorize";
   redirectURL += "?response_type=token";
@@ -152,7 +173,10 @@ export default function Home() {
       <title>Explorify</title>
       {!authorized && (
         <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-teal-200 to-lime-200 dark:from-teal-800 dark:to-lime-800 p-8">
-          <h1 className="sm:text-8xl text-7xl font-bold">explorify</h1>
+          <div className="flex flex-row items-center gap-4">
+            <h1 className="sm:text-8xl text-7xl font-bold">explorify</h1>
+            <img alt="Explorify" src="/logo.png" className="w-32 h-32" />
+          </div>
           <h2 className="flex flex-col text-xl text-center my-16 gap-1">
             <p>
               Explorify utilizes your Spotify listening history to generate
@@ -180,10 +204,15 @@ export default function Home() {
       {authorized && (
         <>
           <main className="min-h-screen flex flex-col items-center justify-between gap-24 bg-gradient-to-b from-teal-200 to-lime-200 dark:from-teal-800 dark:to-lime-800 md:px-24 md:pb-24 px-12 pb-12">
-            <div className="flex sm:flex-row flex-col items-center justify-between sm:gap-0 gap-6 p-8 w-[95vw]">
-              <h1 className="sm:text-6xl text-5xl font-bold text-center">
-                explorify
-              </h1>
+            <div className="flex md:flex-row flex-col items-center justify-between md:gap-0 gap-6 p-8 w-[97.5vw]">
+              <div className="flex flex-row items-center gap-4">
+                <h1 className="text-6xl font-bold text-center">explorify</h1>
+                <img
+                  alt="Explorify"
+                  src="/logo.png"
+                  className="w-16 h-16 sm:block hidden"
+                />
+              </div>
               {username && profileImages && (
                 <div className="flex flex-row items-center gap-3 px-6 py-4 rounded-full bg-blue-200 dark:bg-blue-800 shadow-md">
                   <div className="rounded-full border-2 border-black">
@@ -207,16 +236,75 @@ export default function Home() {
               <p className="sm:text-3xl text-2xl text-center">
                 search for an artist
               </p>
-              <div className="flex flex-row items-center bg-white shadow-lg rounded-full p-2 gap-2">
-                <input
-                  placeholder="The Weeknd"
-                  className="px-4 py-2 bg-white text-black sm:text-lg text-sm rounded-full sm:w-96 w-48 outline-none"
-                  disabled={disabled}
-                />
-                <button className="bg-blue-200 dark:bg-blue-600 p-3 rounded-full hover:bg-blue-400 dark:hover:bg-blue-800 duration-200">
-                  <IconSearch />
-                </button>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-row items-center bg-white shadow-lg rounded-full p-2 gap-2">
+                  <input
+                    value={query}
+                    onClick={() => setSeedGenre("")}
+                    onKeyUp={(event) => {
+                      if (event.key === "Enter") {
+                        search();
+                      }
+                    }}
+                    onChange={(event) => {
+                      setQuery(event.target.value);
+                    }}
+                    placeholder="The Weeknd"
+                    className="px-4 py-2 bg-white text-black sm:text-lg text-sm rounded-full sm:w-96 w-48 outline-none"
+                  />
+                  <button
+                    onClick={search}
+                    className="bg-blue-200 dark:bg-blue-600 p-3 rounded-full hover:bg-blue-400 dark:hover:bg-blue-800 duration-200"
+                  >
+                    {!loading && <IconSearch />}
+                    {loading && (
+                      <img
+                        alt="loading"
+                        src="https://i.gifer.com/origin/34/34338d26023e5515f6cc8969aa027bca_w200.gif"
+                        width={24}
+                        height={24}
+                      />
+                    )}
+                  </button>
+                </div>
+                {searchResults.length > 0 && !seedArtist && (
+                  <div className="flex flex-col border border-black bg-white rounded-2xl sm:w-96 w-48 shadow-lg">
+                    {searchResults.map((item, index) => {
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setSeedArtist(item);
+                            setSearchResults([]);
+                          }}
+                          className={
+                            index === 0
+                              ? "hover:bg-neutral-200 duration-200 border-b rounded-t-2xl p-2"
+                              : index === searchResults.length - 1
+                              ? "hover:bg-neutral-200 duration-200 rounded-b-2xl p-2"
+                              : "hover:bg-neutral-200 duration-200 border border-t-0 p-2"
+                          }
+                        >
+                          {item.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
+              {seedArtist && (
+                <div className="flex flex-row items-center gap-4 p-4 rounded-full border-2 border-black bg-blue-200 dark:bg-blue-800">
+                  <p>{seedArtist.name}</p>
+                  <button>
+                    <IconCircleX
+                      onClick={() => {
+                        setSeedArtist(undefined);
+                      }}
+                      className="hover:scale-125 duration-200"
+                    />
+                  </button>
+                </div>
+              )}
             </div>
             <div className="flex flex-row items-center gap-5">
               <div className="w-[25vw] h-1 border-b-2 border-b-black dark:border-b-white"></div>
@@ -232,7 +320,7 @@ export default function Home() {
                       key={index}
                       className={
                         seedGenre === item
-                          ? "px-5 py-3 rounded-full shadow-md bg-black dark:bg-white text-white dark:text-black hover:scale-110 duration-300 scale-110"
+                          ? "px-5 py-3 rounded-full shadow-md bg-black dark:bg-white text-white dark:text-black scale-110"
                           : "px-5 py-3 rounded-full shadow-md bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-300"
                       }
                       onClick={() => {
@@ -240,6 +328,8 @@ export default function Home() {
                           setSeedGenre("");
                         } else {
                           setSeedGenre(item);
+                          setSeedArtist(undefined);
+                          setSearchResults([]);
                         }
                       }}
                     >
