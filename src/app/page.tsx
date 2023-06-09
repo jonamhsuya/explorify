@@ -179,7 +179,7 @@ export default function Home() {
         <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-teal-200 to-lime-200 dark:from-teal-800 dark:to-lime-800 p-8">
           <div className="flex flex-row items-center gap-4">
             <h1 className="sm:text-8xl text-7xl font-bold">explorify</h1>
-            <img alt="Explorify" src="/logo.png" className="w-32 h-32" />
+            <img alt="Explorify" src="/logo.png" className="w-32 h-32 sm:block hidden" />
           </div>
           <h2 className="flex flex-col text-xl text-center my-16 gap-1">
             <p>
