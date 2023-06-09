@@ -162,6 +162,19 @@ export default function Home() {
     }
   };
 
+  const formatFollowers = (followers: number) => {
+    if (followers < 1000) {
+      return followers;
+    } else {
+      followers /= 1000;
+      if (followers < 1000) {
+        return Math.trunc(followers) + "K";
+      }
+      followers /= 1000;
+      return Math.trunc(followers) + "M";
+    }
+  };
+
   const client_id = "adfd1bc87db44b8898bfab14d45d4a6f";
   const redirect_uri = "https://explorify.ayushmanoj.com";
   const scope = "user-top-read";
@@ -179,7 +192,11 @@ export default function Home() {
         <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-teal-200 to-lime-200 dark:from-teal-800 dark:to-lime-800 p-8">
           <div className="flex flex-row items-center gap-4">
             <h1 className="sm:text-8xl text-7xl font-bold">explorify</h1>
-            <img alt="Explorify" src="/logo.png" className="w-32 h-32 sm:block hidden" />
+            <img
+              alt="Explorify"
+              src="/logo.png"
+              className="w-32 h-32 sm:block hidden"
+            />
           </div>
           <h2 className="flex flex-col text-xl text-center my-16 gap-1">
             <p>
@@ -219,7 +236,7 @@ export default function Home() {
               </div>
               {username && profileImages && (
                 <div className="flex flex-row items-center gap-3 px-6 py-4 rounded-full bg-blue-200 dark:bg-blue-800 shadow-md">
-                  <div className="rounded-full border-2 border-black">
+                  <div className="rounded-full border-2 border-black w-max">
                     <img
                       alt={username}
                       src={profileImages[0].url}
@@ -278,7 +295,7 @@ export default function Home() {
                           key={index}
                           onClick={() => {
                             setSeedArtist(item);
-                            setSeedGenre("")
+                            setSeedGenre("");
                             setSearchResults([]);
                           }}
                           className={
@@ -293,12 +310,12 @@ export default function Home() {
                             <img
                               alt={item.name}
                               src={item.images[0]?.url}
-                              className="w-16 h-16 rounded-full object-cover sm:block hidden"
+                              className="w-12 h-12 rounded-full object-cover sm:block hidden"
                             />
-                            <p className="text-lg text-left">{item.name}</p>
+                            <p className="text-left">{item.name}</p>
                           </div>
                           <p className="text-xs text-right border border-transparent sm:block hidden">
-                            {item.followers.total} followers
+                            {formatFollowers(item.followers.total)} followers
                           </p>
                         </button>
                       );
@@ -307,13 +324,16 @@ export default function Home() {
                 )}
               </div>
               {seedArtist && (
-                <div className="flex flex-row items-center gap-4 px-6 py-2 rounded-2xl border-2 border-black bg-blue-200 dark:bg-blue-800">
+                <div className="flex flex-row items-center gap-4 px-6 py-3 rounded-2xl border-2 border-black bg-blue-200 dark:bg-blue-800">
                   <img
                     alt={seedArtist.name}
                     src={seedArtist.images[0]?.url}
                     className="w-16 h-16 rounded-full border border-black object-cover"
                   />
-                  <p className="text-xl">{seedArtist.name}</p>
+                  <div className="flex flex-col">
+                    <p className="text-xl">{seedArtist.name}</p>
+                    <p className="text-xs">{formatFollowers(seedArtist.followers.total)} followers</p>
+                  </div>
                   <button>
                     <IconCircleX
                       size={28}
@@ -386,7 +406,7 @@ export default function Home() {
                       : "flex flex-row items-center gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
                   }
                 >
-                  <p>based on my</p>
+                  <p>from my</p>
                   <select
                     value={timeRange}
                     onChange={(event) => {
