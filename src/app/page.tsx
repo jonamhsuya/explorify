@@ -288,7 +288,7 @@ export default function Home() {
                   </button>
                 </div>
                 {searchResults && searchResults.length > 0 && (
-                  <div className="flex flex-col border border-black bg-white rounded-2xl sm:w-96 w-64 shadow-lg">
+                  <div className="flex flex-col border border-black bg-white text-black rounded-2xl sm:w-96 w-64 shadow-lg">
                     {searchResults.map((item, index) => {
                       return (
                         <button
