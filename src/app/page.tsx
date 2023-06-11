@@ -23,6 +23,7 @@ export default function Home() {
   const [genres, setGenres] = useState([]);
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState(Array<Artist>);
+  const [searchFailed, setSearchFailed] = useState(false);
   const [seedArtist, setSeedArtist] = useState<Artist>();
   const [seedGenre, setSeedGenre] = useState("");
   const [useHistory, setUseHistory] = useState("");
@@ -77,21 +78,29 @@ export default function Home() {
   const search = async () => {
     if (query !== "") {
       setLoading(true);
-      let searchData = await fetch(
+      fetch(
         "https://api.spotify.com/v1/search?q=" +
           query +
           "&type=artist&limit=10",
         {
           headers: { Authorization: "Bearer " + accessToken },
         }
-      );
-      if (searchData.status === 401) {
-        setModalOpen(true);
-        return;
-      }
-      let searchJSON = await searchData.json();
-      setSearchResults(searchJSON.artists?.items);
-      setLoading(false);
+      )
+        .then(async (searchData) => {
+          if (searchData.status === 401) {
+            setModalOpen(true);
+            return;
+          }
+          let searchJSON = await searchData.json();
+          setSearchResults(searchJSON.artists?.items);
+          setSearchFailed(searchJSON.artists.total === 0);
+          setLoading(false);
+        })
+        .catch(() => {
+          setSearchResults([]);
+          setSearchFailed(true);
+          setLoading(false);
+        });
     }
   };
 
@@ -102,6 +111,7 @@ export default function Home() {
       alert("Please select how you want your recommendations to be generated.");
     } else {
       setLoading(true);
+      setRecommendations([]);
 
       let url = "https://api.spotify.com/v1/me/top/tracks";
       url += "?time_range=" + timeRange;
@@ -155,6 +165,10 @@ export default function Home() {
       let recommendationData = await fetch(url, {
         headers: { Authorization: "Bearer " + accessToken },
       });
+      if (recommendationData.status === 401) {
+        setModalOpen(true);
+        return;
+      }
       let recommendationJSON = await recommendationData.json();
       setRecommendations(recommendationJSON.tracks);
 
@@ -309,7 +323,11 @@ export default function Home() {
                           <div className="flex flex-row items-center gap-4">
                             <img
                               alt={item.name}
-                              src={item.images[0]?.url}
+                              src={
+                                item.images[0]?.url
+                                  ? item.images[0]?.url
+                                  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/768px-Windows_10_Default_Profile_Picture.svg.png"
+                              }
                               className="w-12 h-12 rounded-full object-cover sm:block hidden"
                             />
                             <p className="text-left">{item.name}</p>
@@ -322,17 +340,36 @@ export default function Home() {
                     })}
                   </div>
                 )}
+                {searchFailed && (
+                  <div className="flex flex-row border border-black bg-white text-black rounded-2xl sm:w-96 w-64 shadow-lg px-4 py-2">
+                    <p>
+                      No results were found for your search. Please try again.
+                    </p>
+                    <button
+                      onClick={() => setSearchFailed(false)}
+                      className="hover:scale-125 duration-200"
+                    >
+                      <IconCircleX />
+                    </button>
+                  </div>
+                )}
               </div>
               {seedArtist && (
                 <div className="flex flex-row items-center gap-4 px-6 py-3 rounded-2xl border-2 border-black bg-blue-200 dark:bg-blue-800">
                   <img
                     alt={seedArtist.name}
-                    src={seedArtist.images[0]?.url}
-                    className="w-16 h-16 rounded-full border border-black object-cover"
+                    src={
+                      seedArtist.images[0]?.url
+                        ? seedArtist.images[0]?.url
+                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/768px-Windows_10_Default_Profile_Picture.svg.png"
+                    }
+                    className="min-w-[4rem] max-w-[4rem] min-h-[4rem] max-h-[4rem] rounded-full border border-black object-cover sm:block hidden"
                   />
                   <div className="flex flex-col">
-                    <p className="text-xl">{seedArtist.name}</p>
-                    <p className="text-xs">{formatFollowers(seedArtist.followers.total)} followers</p>
+                    <p className="sm:text-xl text-base">{seedArtist.name}</p>
+                    <p className="text-xs">
+                      {formatFollowers(seedArtist.followers.total)} followers
+                    </p>
                   </div>
                   <button>
                     <IconCircleX
@@ -390,8 +427,8 @@ export default function Home() {
                   }}
                   className={
                     useHistory === "false"
-                      ? "px-6 py-4 rounded-full md:text-xl sm:text-base text-xs bg-black dark:bg-white text-white dark:text-black scale-110 shadow-lg"
-                      : "px-6 py-4 rounded-full md:text-xl sm:text-base text-xs bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
+                      ? "px-6 py-4 rounded-full lg:text-xl sm:text-base text-xs bg-black dark:bg-white text-white dark:text-black scale-110 shadow-lg"
+                      : "px-6 py-4 rounded-full lg:text-xl sm:text-base text-xs bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
                   }
                 >
                   randomly
@@ -402,8 +439,8 @@ export default function Home() {
                   }}
                   className={
                     useHistory === "true"
-                      ? "flex flex-row items-center gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-black dark:bg-white text-white dark:text-black scale-110 shadow-lg"
-                      : "flex flex-row items-center gap-2 px-6 py-4 rounded-full md:text-xl sm:text-base text-xs w-max bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
+                      ? "flex flex-row items-center gap-2 px-6 py-4 rounded-full lg:text-xl sm:text-base text-xs w-max bg-black dark:bg-white text-white dark:text-black scale-110 shadow-lg"
+                      : "flex flex-row items-center gap-2 px-6 py-4 rounded-full lg:text-xl sm:text-base text-xs w-max bg-white dark:bg-black text-black dark:text-white hover:scale-110 duration-200 shadow-lg"
                   }
                 >
                   <p>from my</p>
@@ -440,8 +477,8 @@ export default function Home() {
                 <img
                   alt="loading"
                   src="https://i.gifer.com/origin/34/34338d26023e5515f6cc8969aa027bca_w200.gif"
-                  width={48}
-                  height={48}
+                  width={36}
+                  height={36}
                 />
               )}
             </button>
