@@ -253,7 +253,7 @@ export default function Home() {
                   <div className="rounded-full border-2 border-black w-max">
                     <img
                       alt={username}
-                      src={profileImages[0].url}
+                      src={profileImages[0]?.url}
                       className="w-8 h-8 rounded-full"
                     />
                   </div>
