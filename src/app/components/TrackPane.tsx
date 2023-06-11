@@ -68,20 +68,15 @@ export default function TrackPane(props: Props) {
       </>
       <>
         <button
-          onClick={() => setClicked(false)}
-          className="flex flex-row items-center justify-around rounded-2xl bg-[#191414] scale-105 text-white shadow-lg lg:w-[56rem] lg:h-96 sm:w-[35rem] sm:h-60 w-64 h-64 sm:p-8 p-4"
-        >
-          {/* <button
-            className="absolute self-start hover:scale-125 duration-200"
-            onClick={() => {
+          onClick={() => {
+            if (playing) {
               audio.pause();
               setPlaying(false);
-              audio.currentTime = 0;
-              setTimeout(() => setClicked(false), 10);
-            }}
-          >
-            <IconCircleX size={24} />
-          </button> */}
+            }
+            setClicked(false);
+          }}
+          className="flex flex-row items-center justify-around rounded-2xl bg-[#191414] scale-105 text-white shadow-lg lg:w-[56rem] lg:h-96 sm:w-[35rem] sm:h-60 w-64 h-64 sm:p-8 p-4"
+        >
           <div className="sm:flex hidden flex-col items-center justify-center gap-2">
             <div className="flex flex-row items-center justify-between lg:w-80 w-60">
               <p className="lg:text-xl text-lg">Popularity</p>
