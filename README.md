@@ -1,34 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Explorify
 
-## Getting Started
+**Explorify** is a web application that generates personalized Spotify music recommendations based on user-selected artists or genres. The application analyzes the user's preferred song audio features, determined from their Spotify listening history, to provide tailored music suggestions.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- Search and select favorite artists or genres.
+- Analyze the user's Spotify listening history for audio features.
+- Generate personalized music recommendations.
+- Responsive and user-friendly interface.
+- Authentication through Spotify to access user data.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js**: Framework for server-side rendering and dynamic web applications.
+- **TypeScript**: Adds static typing and improved tooling to JavaScript.
+- **Tailwind CSS**: Utility-first CSS framework for efficient and customizable styling.
+- **Spotify API**: Access to Spotify's music data, user listening history, and audio features.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Usage
+- Log in to your Spotify account.
+- Search for your favorite artists or genres.
+- Explore personalized music recommendations based on your listening history.
+- Adjust preferences and discover new tracks.
 
-## Learn More
+## Acknowledgements
+This project uses the Spotify API to fetch music data and recommendations.
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
+Contributions are welcome! Feel free to open issues or pull requests for improvements or bug fixes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## License
+This project is licensed under the MIT License.
